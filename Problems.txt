@@ -1,0 +1,8 @@
+Problems：
+Problem 1.访问MIT-BIH Arrhythmia Database (mitdb)，选择第111号、115号 两个record的MLII导联心电数据前30秒钟，下载、读入并显示 
+Problem 2.计算平均心率（30秒钟），短时心率（5秒钟内心率，每秒更新1次） 
+Problem 3.短时傅里叶变换，选择合适的窗宽，判断是否存在工频等噪声 
+Problem 4.计算分析基线漂移等低频噪声 
+Problem 5.设计滤波器，滤除工频、基线漂移等噪声 
+Problem 6.设计算法检测R波，计算R-R间期
+第3项需对两条数据进行处理、分析，其余只需完成一条数据
