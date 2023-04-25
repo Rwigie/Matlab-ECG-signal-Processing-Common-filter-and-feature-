@@ -28,15 +28,5 @@ More Explanation
 
 
 
-'''
-1.MIT-BIH dataset 通过工具下载csv文件后存入data文件夹中，分为111.csv, 115.csv
-	
-	数据说明：	时长 60 s
-		  	采样率：360 Hz 
-		
-2.所有的代码都在main.m中，用Problem分开了代码块
 
-3.所有的结果图在Fig中，按照问题的回答分为Fig1.jpg ~ Fig6.jpg
 
-4.具体代码说明在Explanation.pdf中
-'''
