@@ -15,6 +15,7 @@ Extract certain feature(RR-interval or R peaks)
 
 
 More Explanation
+
 1. The data is from MIT-BIH Arrhythmia Database, select record 111 and 115 and save it to 111.csv and 115.csv
 
     Time duration: 60 seconds
@@ -26,6 +27,8 @@ More Explanation
  
 
 
+
+'''
 1.MIT-BIH dataset 通过工具下载csv文件后存入data文件夹中，分为111.csv, 115.csv
 	
 	数据说明：	时长 60 s
@@ -36,3 +39,4 @@ More Explanation
 3.所有的结果图在Fig中，按照问题的回答分为Fig1.jpg ~ Fig6.jpg
 
 4.具体代码说明在Explanation.pdf中
+'''
