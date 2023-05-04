@@ -47,10 +47,10 @@ Hb1 = get_Hb_5s(path_111);
 Hb2 = get_Hb_5s(path_115);
 t = 1:25;
 figure;
-   plot(Hb1,'*r');
+   plot(Hb1,'-*r');
    ylim([50,80]);
    hold on;
-   plot(Hb2,'.b')
+   plot(Hb2,'-*b')
    legend('Channel 111','Channel 115');
    saveas(gcf,'Fig/Problem2.jpg')
 
@@ -64,6 +64,12 @@ y = y(1:(N-1)/2);
 f = (0: N-1) * fs/ N;
 f = f(1:(N-1)/2);
 figure;
+    subplot(211);
+    plot(f,abs(y),'blue');
+    title('Fourier Transform');
+    xlim([0,100]);
+    xlabel('Frequency(Hz)');
+    subplot(212);
     plot(f,abs(y),'r')
     xlim([0,4]);
     title('Fourier Transformation')
@@ -184,6 +190,16 @@ figure;
  % Get R wave and RR_interval
 [R,rr_interval] = get_Rwave(s_60,time_start,time_end);
 avg_rr = mean(rr_interval);
+figure;
+        plot(t1,s_60);
+        xlabel('Seconds(s)');
+        ylabel('Amplitude(mV)');
+        hold on;
+        plot(t1(R),s_60(R),'.r');
+        %plot(t1(points),s_60(points),'.b');
+        legend('Signal','Rwave');
+        saveas(gcf,'Fig/Problem6.jpg')
+        
 
 % Function Explanation:
     % get_data(): get data, [time_start, time_end]
@@ -193,6 +209,8 @@ avg_rr = mean(rr_interval);
     % baseline_filter(): baseline filter
     % bandpass_60(): filter 60 Hz noises
     % get_Rwave: get R wave points and return RR_interval
+
+
 
 function [second, signal] = get_data(file_path,time_start,time_end)
     % csv has 2 columns, first is time, second is amplitude
@@ -265,6 +283,51 @@ function [avg_Hb,points] = get_Hb(s, start_time, end_time)
     
 end
 
+function [R,RR_interval] = get_Rwave(s,time_start,time_end)
+    
+    % R, Array[float] : return every R wave time dots;
+    % RR_interval Array[int] : return RR_interval, the num should = R - 1; 
+    
+    [a,points] = get_Hb(s,time_start,time_end);
+    clear a;
+    t = 1:length(s);
+    t = t / 360;
+    max_num = 0;
+    R = [];
+    for i = 1:length(points)
+        max = 0;
+        for j = points(i): points(i) + 72
+            if j >= length(s) - 1
+                break;
+            end
+            if (s(j+1)>=s(j)) && (s(j+1)>=s(j+2))
+                if max <= s(j+1)
+                      max = s(j+1);
+                      max_num = j+1;
+                end
+            end
+                 
+        end
+        R = [R,max_num];
+    end
+    RR_interval = [];
+    for i = 1:length(R)-1
+        interval = R(i+1) - R(i);
+        RR_interval = [RR_interval,interval]; 
+    end
+    RR_interval = RR_interval/360;
+    %figure;
+        %plot(t,s);
+        %xlabel('Seconds(s)');
+        %ylabel('Amplitude(mV)');
+        %hold on;
+        %plot(t(R),s(R),'.r');
+        %plot(t(points),s(points),'.b');
+        %legend('Signal','Rwave');
+        %saveas(gcf,'Fig/Problem6.jpg')
+        
+end
+
 function Hb = get_Hb_5s(file_path)
 
     Hb = [];
@@ -272,8 +335,12 @@ function Hb = get_Hb_5s(file_path)
         time_start = i;
         time_end = i + 5;
         [t,s] = get_data(file_path,time_start,time_end);
-        [avg_Hb,points] = get_Hb(s, time_start, time_end);
-        Hb = [Hb, avg_Hb];
+        [R,RR_interval] = get_Rwave(s,time_start,time_end);
+        %[avg_Hb,points] = get_Hb(s, time_start, time_end);
+        rr_interval = mean(RR_interval);
+        hb = 60 / rr_interval;
+        Hb = [Hb, hb];
+        Hb = Hb;
     end
 
 end
@@ -293,44 +360,6 @@ function s = bandpass_60(s1,fs)
     s= filtfilt(d,s1); 
 end
 
-function [R,RR_interval] = get_Rwave(s,time_start,time_end)
-
-    [a,points] = get_Hb(s,time_start,time_end);
-    clear a;
-    t = 1:length(s);
-    t = t / 360;
-    max_num = 0;
-    R = [];
-    for i = 1:length(points)
-        max = 0;
-        for j = points(i): points(i) + 72
-            if (s(j+1)>=s(j)) && (s(j+1)>=s(j+2))
-                if max <= s(j+1)
-                    max = s(j+1);
-                    max_num = j+1;
-                end
-            end
-      
-        end
-        R = [R,max_num];
-    end
-    RR_interval = [];
-    for i = 1:length(R)-1
-        interval = R(i+1) - R(i);
-        RR_interval = [RR_interval,interval]; 
-    end
-    RR_interval = RR_interval/360;
-    figure;
-        plot(t,s);
-        xlabel('Seconds(s)');
-        ylabel('Amplitude(mV)');
-        hold on;
-        plot(t(R),s(R),'.r');
-        plot(t(points),s(points),'.b');
-        legend('Signal','Rwave');
-        saveas(gcf,'Fig/Problem6.jpg')
-        
-end
 
 function y = wavelet_bandpass(s,wname,lev)   
     [c,l] = wavedec(s,lev,wname);
